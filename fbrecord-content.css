@@ -1,0 +1,20 @@
+.fbrecord-read[fbrecord-init] {
+	background-color: #ddf;
+}
+
+.fbrecord-folded {
+	overflow: hidden;
+	max-height: 1em;
+}
+
+.fbrecord-folded:hover {
+	max-height: 99999px;
+}
+
+.fbrecord-folded .fbrecord-folded-moveup {
+	margin-top: -3em;
+}
+
+.fbrecord-folded:hover .fbrecord-folded-moveup {
+	margin-top: inherit;
+}

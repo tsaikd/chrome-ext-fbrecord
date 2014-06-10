@@ -1,0 +1,34 @@
+<!doctype html>
+<html ng-app="fbrecord-popup">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Facebook Read Cards Record Config</title>
+		<link rel="shortcut icon" href="favicon.png">
+		<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+		<script src="lib/angular/angular.min.js"></script>
+		<script src="fbrecord-popup.js"></script>
+	</head>
+	<body ng-controller="PopupCtrl" style="padding: 10px; width: 250px;">
+		<div>
+			<div>How to use:</div>
+			<div>Move your mouse across facebook cards/stories.</div>
+		</div>
+		<br/>
+		<div>
+			<div>Tips:</div>
+			<div>Press [SHIFT] when moving mouse will clean read status.</div>
+		</div>
+		<br/>
+		<div>
+			<a target="_blank" href="https://github.com/tsaikd/chrome-ext-fbrecord">Source Code is on Github</a>
+		</div>
+		<br/>
+		<div>
+			<span>Storage usage</span>: <span>{{data.usageBytes | bytes}}</span>
+		</div>
+		<br/>
+		<button ng-click="update()" class="btn btn-primary">Update</button>
+		<button ng-click="clear()" class="btn btn-warning">Clear</button>
+	</body>
+</html>

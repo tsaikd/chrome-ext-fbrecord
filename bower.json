@@ -1,0 +1,20 @@
+{
+  "name": "fbrecord",
+  "version": "0.0.1",
+  "homepage": "https://github.com/tsaikd/chrome-ext-fbrecord/",
+  "authors": [
+    "tsaikd <tsaikd@gmail.com>"
+  ],
+  "description": "Facebook cards/stories will be toggled after read.",
+  "keywords": [
+    "Docker"
+  ],
+  "license": "LGPLv3",
+  "dependencies": {
+    "bootstrap": ">=3",
+    "angular": ">=1.2"
+  },
+  "main": [
+    "fbrecord-popup.html"
+  ]
+}
