@@ -17,7 +17,7 @@ angular.module("fbrecord-popup", [])
 	, function($scope) {
 
 	var bgpage = chrome.extension.getBackgroundPage();
-	$scope.data = bgpage.data;
+	$scope.data = bgpage.gdata;
 
 	$scope.update = function() {
 		bgpage.updateStorageUsage(function() {
