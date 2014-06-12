@@ -14,15 +14,17 @@
     {
       "matches": ["https://www.facebook.com/"],
       "css": ["fbrecord-content.css"],
-      "js": ["lib/jquery/dist/jquery.js", "fbrecord-content.js"],
+      "js": ["lib/jquery/dist/jquery.js", "fbrecord-ga.js", "fbrecord-content.js"],
       "run_at": "document_end"
     }
   ],
   "permissions": [
-    "tabs", "https://www.facebook.com/",
-    "storage"
+    "tabs",
+    "storage",
+    "https://www.facebook.com/"
   ],
   "web_accessible_resources": [
-    "icon.png"
+    "icon.png",
+    "ga.js"
   ]
 }
