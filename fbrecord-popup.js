@@ -16,18 +16,39 @@ angular.module("fbrecord-popup", [])
 	, [       "$scope"
 	, function($scope) {
 
-	var bgpage = chrome.extension.getBackgroundPage();
-	$scope.data = bgpage.gdata;
+	$scope.gdata = {};
+	$scope.empty_gdata = {
+		usageBytes: 0,
+		cards: []
+	};
 
 	$scope.update = function() {
-		bgpage.updateStorageUsage(function() {
-			$scope.$digest();
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {get: "usage"}, function(response) {
+				$scope.$apply(function() {
+					$scope.gdata = response || $scope.empty_gdata;
+				});
+			});
 		});
 	};
 
 	$scope.clear = function() {
-		bgpage.clearStorage(function() {
-			$scope.$digest();
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {do: "clear"}, function(response) {
+				$scope.$apply(function() {
+					$scope.gdata = response || $scope.empty_gdata;
+				});
+			});
+		});
+	};
+
+	$scope.sync = function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {do: "sync"}, function(response) {
+				$scope.$apply(function() {
+					$scope.gdata = response || $scope.empty_gdata;
+				});
+			});
 		});
 	};
 

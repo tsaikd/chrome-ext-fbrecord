@@ -2,6 +2,8 @@
 (function($) {
 	var $body = $("body");
 	var gdata = {
+		usageBytes: 0,
+		saving: false,
 		cards: [],
 		cardNameMap: {},
 		cardTimeMap: {},
@@ -62,12 +64,28 @@
 			return;
 		}
 		if (gdata.dirtyCount > 9) {
-			saveStorage();
+			return saveStorage();
 		}
 		var passTime = (new Date().getTime()) - gdata.dirtyTime;
-		if (passTime > 30000) {
-			saveStorage();
+		if (passTime > 15000) {
+			return saveStorage();
 		}
+	}
+
+	function loadSlot(num, fbrecord_num) {
+		var key = "fbrecord_data_" + num;
+		chrome.storage.sync.get(key, function(vals) {
+			if (vals && vals[key] && vals[key].length) {
+				gdata.cards = gdata.cards.concat(vals[key]);
+				vals[key].forEach(function(setdata) {
+					gdata.cardNameMap[setdata.n] = setdata;
+					gdata.cardTimeMap[setdata.t] = setdata;
+				});
+				if (num < fbrecord_num) {
+					loadSlot(num+1, fbrecord_num);
+				}
+			}
+		});
 	}
 
 	function loadStorage() {
@@ -76,28 +94,18 @@
 		gdata.cardTimeMap = {};
 		chrome.storage.sync.get("fbrecord_num", function(vals) {
 			var fbrecord_num = vals["fbrecord_num"] || 0;
-			for (var i=0 ; i<fbrecord_num ; i++) {
-				var key = "fbrecord_data_" + i;
-				chrome.storage.sync.get(key, function(vals) {
-					if (vals && vals[key] && vals[key].length) {
-						gdata.cards = gdata.cards.concat(vals[key]);
-						vals[key].forEach(function(setdata) {
-							gdata.cardNameMap[setdata.n] = setdata;
-							gdata.cardTimeMap[setdata.t] = setdata;
-						});
-					}
-				});
-			}
+			loadSlot(0, fbrecord_num);
 		});
 	}
 
 	function saveStorage(cb) {
-		if (gdata.dirtyCount < 1) {
+		if (gdata.dirtyCount < 1 || gdata.saving) {
 			if (cb) {
 				cb.apply(this, []);
 			}
 			return;
 		}
+		gdata.saving = true;
 		var CARDS_PER_SLOT = 40;
 		var setdata = {};
 		for (var i=0 ; i<chrome.storage.sync.MAX_ITEMS ; i++) {
@@ -115,13 +123,16 @@
 				if (chrome.runtime.lastError) {
 					if (gdata.cards.length > 100) {
 						cleanOldCard();
+						gdata.saving = false;
 						saveStorage(cb);
 					} else {
 						console.error(chrome.runtime.lastError);
+						gdata.saving = false;
 					}
 				} else {
 					gdata.dirtyCount = 0;
 					gdata.dirtyTime = new Date().getTime();
+					gdata.saving = false;
 					if (cb) {
 						cb.apply(this, arguments);
 					}
@@ -130,14 +141,75 @@
 		});
 	}
 
+	function clearStorage(cb) {
+		chrome.storage.sync.clear(function() {
+			gdata = {
+				usageBytes: 0,
+				saving: false,
+				cards: [],
+				cardNameMap: {},
+				cardTimeMap: {},
+				dirtyCount: 0,
+				dirtyTime: new Date().getTime()
+			};
+			$body.find(".fbrecord-init").removeClass("fbrecord-init fbrecord-read fbrecord-folded");
+
+			if (cb) {
+				cb.apply(this, arguments);
+			}
+		});
+	}
+
+	function updateStorageUsage(cb) {
+		chrome.storage.sync.getBytesInUse(function(num) {
+			gdata.usageBytes = num || 0;
+			if (cb) {
+				cb.apply(this, arguments);
+			}
+		});
+	}
+
+	chrome.runtime.onMessage.addListener(
+		function(request, sender, sendResponse) {
+			/* used for debug
+			console.log(sender.tab ?
+						"from a content script:" + sender.tab.url :
+						"from the extension", request);
+			//*/
+			if (request.get == "gdata") {
+				sendResponse(gdata);
+			}
+			if (request.get == "usage") {
+				updateStorageUsage(function() {
+					sendResponse(gdata);
+				});
+				return true; // use sendResponse later
+			}
+			if (request.do == "sync") {
+				saveStorage(function() {
+					updateStorageUsage(function() {
+						sendResponse(gdata);
+					});
+				});
+				return true; // use sendResponse later
+			}
+			if (request.do == "clear") {
+				clearStorage(function() {
+					sendResponse(gdata);
+				});
+				return true; // use sendResponse later
+			}
+		}
+	);
+
 	loadStorage();
 
 	setInterval(dirtyAutoSave, 2000);
 
 	setInterval(function() {
-		$body.find("div[data-cursor]:not([fbrecord-init])").each(function() {
+		$body.find("div[data-cursor]:not(.fbrecord-init)").each(function() {
 			var $t = $(this);
-			$t.attr("fbrecord-init", "1");
+			$t.addClass("fbrecord-init");
 			var permalink = $t.find("a[href] > abbr[title]:first").parent().attr("href");
 			$t.attr("fbrecord-permalink", permalink);
 			if (isCardRead(permalink)) {
@@ -160,11 +232,11 @@
 	});
 
 	$body
-	.on("mouseenter", "div[fbrecord-init][fbrecord-permalink]:not(.fbrecord-read)", function() {
+	.on("mouseenter", "div.fbrecord-init[fbrecord-permalink]:not(.fbrecord-read)", function() {
 		var $t = $(this);
 		$t.addClass("fbrecord-read");
 	})
-	.on("mouseleave", "div.fbrecord-read[fbrecord-init][fbrecord-permalink]", function(e) {
+	.on("mouseleave", "div.fbrecord-init.fbrecord-read[fbrecord-permalink]", function(e) {
 		var $t = $(this);
 		var permalink = $t.attr("fbrecord-permalink");
 		if (e.shiftKey) {

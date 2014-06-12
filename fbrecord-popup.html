@@ -1,15 +1,17 @@
 <!doctype html>
-<html ng-app="fbrecord-popup">
+<html ng-app="fbrecord-popup" ng-csp>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Facebook Read Cards Record Config</title>
 		<link rel="shortcut icon" href="favicon.png">
 		<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="lib/angular/angular-csp.css">
+		<link rel="stylesheet" href="fbrecord-popup.css">
 		<script src="lib/angular/angular.min.js"></script>
 		<script src="fbrecord-popup.js"></script>
 	</head>
-	<body ng-controller="PopupCtrl" style="padding: 10px; width: 250px;">
+	<body ng-controller="PopupCtrl" style="padding: 10px; width: 300px;">
 		<div>
 			<div>How to use:</div>
 			<div>Move your mouse across facebook cards/stories.</div>
@@ -25,10 +27,30 @@
 		</div>
 		<br/>
 		<div>
-			<span>Storage usage</span>: <span>{{data.usageBytes | bytes}}</span>
+			<table>
+				<tbody>
+					<tr>
+						<th>Usage:</th>
+						<td>
+							<span>{{gdata.usageBytes | bytes}}</span>
+							<button ng-show="gdata.usageBytes > 0" ng-click="clear()" class="btn btn-xs btn-warning">Clear</button>
+						</td>
+					</tr>
+					<tr>
+						<th>Record cards:</th>
+						<td>{{gdata.cards.length | number}}</td>
+					</tr>
+					<tr>
+						<th>Need to sync:</th>
+						<td>
+							<span ng-show="gdata.dirtyCount">Yes <button ng-click="sync()" class="btn btn-xs btn-primary">Sync</button></span>
+							<span ng-show="!gdata.dirtyCount">No</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 		<br/>
-		<button ng-click="update()" class="btn btn-primary">Update</button>
-		<button ng-click="clear()" class="btn btn-warning">Clear</button>
+		<button ng-click="update()" class="btn btn-primary">Refresh</button>
 	</body>
 </html>
