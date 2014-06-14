@@ -22,8 +22,10 @@
 		gdata.cards.push(setdata);
 		gdata.cardNameMap[setdata.n] = setdata;
 		gdata.cardTimeMap[setdata.t] = setdata;
+		if (gdata.dirtyCount < 1) {
+			gdata.dirtyTime = new Date().getTime();
+		}
 		gdata.dirtyCount++;
-		gdata.dirtyTime = new Date().getTime();
 	}
 
 	function removeReadCard(name) {
@@ -63,11 +65,8 @@
 		if (gdata.dirtyCount < 1) {
 			return;
 		}
-		if (gdata.dirtyCount > 9) {
-			return saveStorage();
-		}
 		var passTime = (new Date().getTime()) - gdata.dirtyTime;
-		if (passTime > 15000) {
+		if (passTime > 30000) {
 			return saveStorage();
 		}
 	}
@@ -119,25 +118,29 @@
 			}
 		}
 		chrome.storage.sync.clear(function() {
-			chrome.storage.sync.set(setdata, function() {
-				if (chrome.runtime.lastError) {
-					if (gdata.cards.length > 100) {
-						cleanOldCard();
-						gdata.saving = false;
-						saveStorage(cb);
+			if (chrome.runtime.lastError) {
+				console.error(chrome.runtime.lastError);
+			} else {
+				chrome.storage.sync.set(setdata, function() {
+					if (chrome.runtime.lastError) {
+						if (gdata.cards.length > 100) {
+							cleanOldCard();
+							gdata.saving = false;
+							saveStorage(cb);
+						} else {
+							console.error(chrome.runtime.lastError);
+							gdata.saving = false;
+						}
 					} else {
-						console.error(chrome.runtime.lastError);
+						gdata.dirtyCount = 0;
+						gdata.dirtyTime = new Date().getTime();
 						gdata.saving = false;
+						if (cb) {
+							cb.apply(this, arguments);
+						}
 					}
-				} else {
-					gdata.dirtyCount = 0;
-					gdata.dirtyTime = new Date().getTime();
-					gdata.saving = false;
-					if (cb) {
-						cb.apply(this, arguments);
-					}
-				}
-			});
+				});
+			}
 		});
 	}
 
