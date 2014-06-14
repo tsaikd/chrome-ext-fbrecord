@@ -16,6 +16,7 @@ angular.module("fbrecord-popup", [])
 	, [       "$scope"
 	, function($scope) {
 
+	$scope.manifest = chrome.runtime.getManifest();
 	$scope.gdata = {};
 	$scope.empty_gdata = {
 		usageBytes: 0,
