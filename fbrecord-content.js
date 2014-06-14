@@ -48,7 +48,7 @@
 	}
 
 	function cleanOldCard() {
-		var num = gdata.cards.length >> 1;
+		var num = Math.round(gdata.cards.length / 3);
 		var delList = [];
 		for (var t in gdata.cardTimeMap) {
 			if (num-- < 1) {
@@ -117,29 +117,24 @@
 				break;
 			}
 		}
-		chrome.storage.sync.clear(function() {
+		chrome.storage.sync.set(setdata, function() {
 			if (chrome.runtime.lastError) {
-				console.error(chrome.runtime.lastError);
-			} else {
-				chrome.storage.sync.set(setdata, function() {
-					if (chrome.runtime.lastError) {
-						if (gdata.cards.length > 100) {
-							cleanOldCard();
-							gdata.saving = false;
-							saveStorage(cb);
-						} else {
-							console.error(chrome.runtime.lastError);
-							gdata.saving = false;
-						}
-					} else {
-						gdata.dirtyCount = 0;
-						gdata.dirtyTime = new Date().getTime();
+				if (gdata.cards.length > 300) {
+					cleanOldCard();
+					chrome.storage.sync.clear(function() {
 						gdata.saving = false;
-						if (cb) {
-							cb.apply(this, arguments);
-						}
-					}
-				});
+						saveStorage(cb);
+					});
+				} else {
+					console.error(chrome.runtime.lastError);
+				}
+			} else {
+				gdata.dirtyCount = 0;
+				gdata.dirtyTime = new Date().getTime();
+				gdata.saving = false;
+				if (cb) {
+					cb.apply(this, arguments);
+				}
 			}
 		});
 	}
