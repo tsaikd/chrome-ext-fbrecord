@@ -71,7 +71,7 @@
 		}
 	}
 
-	function loadSlot(num, fbrecord_num) {
+	function loadSlot(num, fbrecord_num, cb) {
 		var key = "fbrecord_data_" + num;
 		chrome.storage.sync.get(key, function(vals) {
 			if (vals && vals[key] && vals[key].length) {
@@ -80,20 +80,24 @@
 					gdata.cardNameMap[setdata.n] = setdata;
 					gdata.cardTimeMap[setdata.t] = setdata;
 				});
-				if (num < fbrecord_num) {
-					loadSlot(num+1, fbrecord_num);
+			}
+			if (num < fbrecord_num) {
+				loadSlot(num+1, fbrecord_num, cb);
+			} else {
+				if (cb) {
+					cb.apply(this, []);
 				}
 			}
 		});
 	}
 
-	function loadStorage() {
+	function loadStorage(cb) {
 		gdata.cards = [];
 		gdata.cardNameMap = {};
 		gdata.cardTimeMap = {};
 		chrome.storage.sync.get("fbrecord_num", function(vals) {
 			var fbrecord_num = vals["fbrecord_num"] || 0;
-			loadSlot(0, fbrecord_num);
+			loadSlot(0, fbrecord_num, cb);
 		});
 	}
 
@@ -200,27 +204,27 @@
 		}
 	);
 
-	loadStorage();
+	loadStorage(function() {
+		setInterval(dirtyAutoSave, 2000);
 
-	setInterval(dirtyAutoSave, 2000);
-
-	setInterval(function() {
-		$body.find("div[data-cursor]:not(.fbrecord-init)").each(function() {
-			var $t = $(this);
-			$t.addClass("fbrecord-init");
-			var permalink = $t.find("a[href] > abbr[title]:first").parent().attr("href");
-			$t.attr("fbrecord-permalink", permalink);
-			if (isCardRead(permalink)) {
-				$t.addClass("fbrecord-read fbrecord-folded");
-			}
-
-			$t.find(".userContent:empty").each(function() {
-				if ($(this).index() === 1) {
-					$(this).prev().addClass("fbrecord-folded-moveup");
+		setInterval(function() {
+			$body.find("div[data-cursor]:not(.fbrecord-init)").each(function() {
+				var $t = $(this);
+				$t.addClass("fbrecord-init");
+				var permalink = $t.find("a[href] > abbr[title]:first").parent().attr("href");
+				$t.attr("fbrecord-permalink", permalink);
+				if (isCardRead(permalink)) {
+					$t.addClass("fbrecord-read fbrecord-folded");
 				}
+
+				$t.find(".userContent:empty").each(function() {
+					if ($(this).index() === 1) {
+						$(this).prev().addClass("fbrecord-folded-moveup");
+					}
+				});
 			});
-		});
-	}, 2000);
+		}, 2000);
+	});
 
 	$(window).on("beforeunload", function() {
 		saveStorage();
