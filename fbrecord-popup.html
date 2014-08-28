@@ -18,7 +18,14 @@
 				<input type="checkbox" ng-model="gdata.config.isBindKeyWrite" ng-change="config()"/>
 				<span>Bind hotkey 'w' to sync data</span>
 			</label>
+			<br/>
+			<label>
+				<span>Max search time (seconds):</span>
+				<input type="number" ng-model="pdata.maxScrollSecond" placeholder="30" style="width: 3em;"/>
+			</label>
+			<button ng-click="scroll()" class="btn btn-xs btn-primary">Scroll to last view</button>
 		</div>
+		<br/>
 		<div>
 			<div>How to use:</div>
 			<div>Move your mouse across facebook cards/stories.</div>

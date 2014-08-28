@@ -188,6 +188,28 @@
 		}
 	}
 
+	function scrollToLastViewPosition(maxTime) {
+		if (new Date().getTime() > maxTime) {
+			return;
+		}
+		if (!gdata.cards.length) {
+			return;
+		}
+
+		var lastcard = gdata.cards[gdata.cards.length - 1],
+			$read;
+
+		$read = $(".fbrecord-init[fbrecord-permalink='" + lastcard.n + "']");
+		if ($read.length) {
+			$body.scrollTop($read.offset().top);
+		} else {
+			$body.scrollTop($body.scrollTop() + $(window).height());
+			setTimeout(function() {
+				scrollToLastViewPosition(maxTime);
+			}, 500);
+		}
+	}
+
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
 			/* used for debug
@@ -224,6 +246,10 @@
 				});
 				gdata.config = request.config;
 				applyConfig();
+				return true; // use sendResponse later
+			}
+			if (request.do == "scroll") {
+				scrollToLastViewPosition(new Date().getTime() + request.maxTime * 1000);
 				return true; // use sendResponse later
 			}
 		}

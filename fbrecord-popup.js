@@ -18,6 +18,9 @@ angular.module("fbrecord-popup", [])
 
 	$scope.manifest = chrome.runtime.getManifest();
 	$scope.gdata = {};
+	$scope.pdata = {
+		maxScrollSecond: 30
+	};
 	$scope.empty_gdata = {
 		usageBytes: 0,
 		cards: []
@@ -60,6 +63,12 @@ angular.module("fbrecord-popup", [])
 					$scope.gdata = response || $scope.empty_gdata;
 				});
 			});
+		});
+	};
+
+	$scope.scroll = function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {do: "scroll", maxTime: $scope.pdata.maxScrollSecond});
 		});
 	};
 
