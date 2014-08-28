@@ -8,7 +8,10 @@
 		cardNameMap: {},
 		cardTimeMap: {},
 		dirtyCount: 0,
-		dirtyTime: new Date().getTime()
+		dirtyTime: new Date().getTime(),
+		config: {
+			isBindKeyWrite: true
+		}
 	};
 
 	function addReadCard(name) {
@@ -171,6 +174,20 @@
 		});
 	}
 
+	function saveStorageKeyEventCb(e) {
+		if (e.keyCode === 119) { // 'w'
+			saveStorage();
+		}
+	}
+
+	function applyConfig() {
+		if (gdata.config.isBindKeyWrite) {
+			$(document).on("keypress", "*", saveStorageKeyEventCb);
+		} else {
+			$(document).off("keypress", "*", saveStorageKeyEventCb);
+		}
+	}
+
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
 			/* used for debug
@@ -199,6 +216,14 @@
 				clearStorage(function() {
 					sendResponse(gdata);
 				});
+				return true; // use sendResponse later
+			}
+			if (request.do == "config") {
+				chrome.storage.sync.set({
+					fbrecord_config: request.config
+				});
+				gdata.config = request.config;
+				applyConfig();
 				return true; // use sendResponse later
 			}
 		}
@@ -248,6 +273,11 @@
 			$t.addClass("fbrecord-folded");
 			addReadCard(permalink);
 		}
+	});
+
+	chrome.storage.sync.get("fbrecord_config", function(vals) {
+		gdata.config = vals["fbrecord_config"] || {};
+		applyConfig();
 	});
 
 	/* used for debug

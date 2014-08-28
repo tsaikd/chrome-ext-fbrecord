@@ -14,6 +14,12 @@
 	<body ng-controller="PopupCtrl" style="padding: 10px; width: 300px;">
 		<div style="position: absolute; right: 1em; bottom: 1em;">{{manifest.version}}</div>
 		<div>
+			<label>
+				<input type="checkbox" ng-model="gdata.config.isBindKeyWrite" ng-change="config()"/>
+				<span>Bind hotkey 'w' to sync data</span>
+			</label>
+		</div>
+		<div>
 			<div>How to use:</div>
 			<div>Move your mouse across facebook cards/stories.</div>
 		</div>
