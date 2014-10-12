@@ -112,7 +112,7 @@
 			return;
 		}
 		gdata.saving = true;
-		var CARDS_PER_SLOT = 40;
+		var CARDS_PER_SLOT = 30;
 		var setdata = {};
 		for (var i=0 ; i<chrome.storage.sync.MAX_ITEMS ; i++) {
 			var key = "fbrecord_data_" + i;
