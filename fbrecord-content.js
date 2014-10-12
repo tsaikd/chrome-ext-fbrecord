@@ -262,7 +262,12 @@
 			$body.find("div[data-cursor]:not(.fbrecord-init)").each(function() {
 				var $t = $(this);
 				$t.addClass("fbrecord-init");
-				var permalink = $t.find("a[href] > abbr[title]:first").parent().attr("href");
+				var permalink = $t.find("a[href] > abbr[title]:first").parent().attr("href") || "";
+				permalink = permalink.replace(/^https?:\/\/www.facebook.com/, "");
+				var mat = permalink.match(/^\/photo\.php\?fbid=(\d+)/);
+				if (mat) {
+					permalink = "/photo/" + mat[1];
+				}
 				$t.attr("fbrecord-permalink", permalink);
 				if (isCardRead(permalink)) {
 					$t.addClass("fbrecord-read fbrecord-folded");
