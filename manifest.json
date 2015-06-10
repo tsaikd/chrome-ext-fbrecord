@@ -3,7 +3,7 @@
 
   "name": "Facebook Read Cards Record",
   "description": "Facebook cards/stories will be toggled after read.",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "icons": { "128": "favicon.png" },
   "author": "tsaikd <tsaikd@gmail.com>",
   "browser_action": {
