@@ -1,14 +1,14 @@
 
 angular.module("fbrecord-popup", [])
 
-.filter('bytes', function() {
+.filter("bytes", function() {
 	return function(bytes, precision) {
-		if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
-		if (typeof precision === 'undefined') precision = 1;
-		if (!bytes) return '0 byte';
-		var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+		if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return "-";
+		if (typeof precision === "undefined") precision = 1;
+		if (!bytes) return "0 byte";
+		var units = ["bytes", "kB", "MB", "GB", "TB", "PB"],
 			number = Math.floor(Math.log(bytes) / Math.log(1024));
-		return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
+		return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + " " + units[number];
 	}
 })
 

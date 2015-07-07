@@ -9,7 +9,8 @@
 		dirtyCount: 0,
 		dirtyTime: new Date().getTime(),
 		config: {
-			isBindKeyWrite: true
+			isBindKeyWrite: false,
+			isHideRightCol: false
 		}
 	};
 
@@ -184,6 +185,11 @@
 			$(document).on("keypress", "*", saveStorageKeyEventCb);
 		} else {
 			$(document).off("keypress", "*", saveStorageKeyEventCb);
+		}
+		if (gdata.config.isHideRightCol) {
+			$("#rightCol").hide();
+		} else {
+			$("#rightCol").show();
 		}
 	}
 

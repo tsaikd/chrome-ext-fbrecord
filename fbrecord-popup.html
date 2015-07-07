@@ -20,6 +20,11 @@
 			</label>
 			<br/>
 			<label>
+				<input type="checkbox" ng-model="gdata.config.isHideRightCol" ng-change="config()"/>
+				<span>Hide right column</span>
+			</label>
+			<br/>
+			<label>
 				<span>Max search time (seconds):</span>
 				<input type="number" ng-model="pdata.maxScrollSecond" placeholder="30" style="width: 3em;"/>
 			</label>
