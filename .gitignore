@@ -1,3 +1,4 @@
 /lib/jquery/src/
 /lib/bootstrap/*
 !/lib/bootstrap/dist/
+/*.zip
