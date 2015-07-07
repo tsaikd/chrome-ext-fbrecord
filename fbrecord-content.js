@@ -1,4 +1,3 @@
-
 (function($) {
 	var $body = $("body");
 	var gdata = {

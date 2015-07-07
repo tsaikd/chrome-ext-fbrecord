@@ -12,9 +12,17 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.facebook.com/", "https://www.facebook.com/?ref=logo", "https://www.facebook.com/?sk=h_chr"],
+      "matches": [
+        "https://www.facebook.com/",
+        "https://www.facebook.com/?ref=logo",
+        "https://www.facebook.com/?sk=h_chr"
+      ],
       "css": ["fbrecord-content.css"],
-      "js": ["lib/jquery/dist/jquery.js", "fbrecord-ga.js", "fbrecord-content.js"],
+      "js": [
+        "lib/jquery/dist/jquery.js",
+        "fbrecord-ga.js",
+        "fbrecord-content.js"
+      ],
       "run_at": "document_end"
     }
   ],

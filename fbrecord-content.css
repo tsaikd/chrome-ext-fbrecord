@@ -1,10 +1,11 @@
-.fbrecord-init.fbrecord-read * {
+.fbrecord-init.fbrecord-read > * {
 	background-color: #ddf;
 }
 
 .fbrecord-init.fbrecord-folded {
 	overflow: hidden;
 	max-height: 1em;
+	margin-bottom: 0.4em;
 }
 
 .fbrecord-init.fbrecord-folded:hover {
