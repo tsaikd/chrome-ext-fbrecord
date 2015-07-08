@@ -47,6 +47,9 @@
 	}
 
 	function isCardRead(name) {
+		if (!name) {
+			return false;
+		}
 		return !!gdata.cardNameMap[name];
 	}
 
@@ -267,11 +270,20 @@
 			$body.find("div[data-cursor]:not(.fbrecord-init)").each(function() {
 				var $t = $(this);
 				$t.addClass("fbrecord-init");
+
 				var permalink = $t.find("a[href] > abbr[title]:first").parent().attr("href") || "";
 				permalink = permalink.replace(/^https?:\/\/www.facebook.com/, "");
 				var mat = permalink.match(/^\/photo\.php\?fbid=(\d+)/);
 				if (mat) {
 					permalink = "/photo/" + mat[1];
+				}
+				if (!permalink) {
+					// get permalink failed
+					if (!$t.find("a[href=#][role=button]").length) {
+						// not regular button, retry later
+						$t.removeClass("fbrecord-init");
+					}
+					return;
 				}
 				$t.attr("fbrecord-permalink", permalink);
 				if (isCardRead(permalink)) {
