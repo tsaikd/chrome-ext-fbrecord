@@ -3,7 +3,7 @@
 
   "name": "Facebook Read Cards Record",
   "description": "Facebook cards/stories will be toggled after read.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "icons": { "128": "favicon.png" },
   "author": "tsaikd <tsaikd@gmail.com>",
   "browser_action": {
@@ -15,7 +15,8 @@
       "matches": [
         "https://www.facebook.com/",
         "https://www.facebook.com/?ref=logo",
-        "https://www.facebook.com/?sk=h_chr"
+        "https://www.facebook.com/?sk=h_chr",
+        "https://www.facebook.com/home.php"
       ],
       "css": ["fbrecord-content.css"],
       "js": [
